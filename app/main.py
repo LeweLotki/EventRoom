@@ -1,3 +1,7 @@
+import logging
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
 from fastapi import FastAPI
 
 from app.resources.users.routes import router as users_router

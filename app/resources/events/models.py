@@ -11,5 +11,5 @@ class Event(Base):
     event_name = Column(String, nullable=False)
     event_options = Column(String, nullable=False)
     geolocation = Column(String, nullable=True)
-    members = Column(JSON, nullable=True, default=list)  # Ensure a default empty list
+    members = Column(JSON, nullable=False, default=list)  # Ensure a default empty list
 
