@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 from app.resources.events import models, schemas
+from app.resources.events.utils import parse_geolocation, haversine_distance
 
 logger = logging.getLogger(__name__)
 
@@ -14,8 +15,26 @@ def get_event(db: Session, event_id: int):
 def get_events(db: Session, skip: int = 0, limit: int = 10):
     return db.query(models.Event).offset(skip).limit(limit).all()
 
+def get_nearby_events(db: Session, event_id: int, distance: float):
+    """Retrieve events within a certain distance from a specified event."""
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if event is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    lat1, lon1 = parse_geolocation(event.geolocation)
+
+    all_events = db.query(models.Event).all()
+    nearby_events = []
+
+    for e in all_events:
+        lat2, lon2 = parse_geolocation(e.geolocation)
+        dist = haversine_distance(lat1, lon1, lat2, lon2)
+        if dist <= distance:
+            nearby_events.append(e)
+
+    return nearby_events
+
 def create_event(db: Session, event: schemas.EventCreate, user_id: int):
-    # Add the creator to the list of members
     db_event = models.Event(
         event_name=event.event_name,
         event_options=event.event_options,
@@ -35,7 +54,6 @@ def join_event(db: Session, event_id: int, user_id: int):
 
     logger.debug(f"Before join: {event.members}")
 
-    # Ensure user_id is not already in members
     if user_id not in event.members:
         event.members.append(user_id)
         logger.debug(f"After join: {event.members}")
@@ -64,7 +82,6 @@ def delete_event(db: Session, event_id: int, user_id: int):
     if event is None:
         raise HTTPException(status_code=404, detail="Event not found")
     
-    # Check if the user is the creator (first member) or implement admin check
     if event.members[0] != user_id:
         raise HTTPException(status_code=403, detail="You do not have permission to delete this event")
 

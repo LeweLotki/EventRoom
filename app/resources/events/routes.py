@@ -28,6 +28,18 @@ def read_event(event_id: int, db: Session = Depends(get_db)):
 def read_events(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return crud.get_events(db, skip=skip, limit=limit)
 
+@router.get("/nearby/{event_id}/{distance}", response_model=list[schemas.EventResponse])
+def get_nearby_events(
+    event_id: int,
+    distance: float,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user) 
+):
+    nearby_events = crud.get_nearby_events(db=db, event_id=event_id, distance=distance)
+    if not nearby_events:
+        raise HTTPException(status_code=404, detail="No nearby events found")
+    return nearby_events
+
 @router.patch("/{event_id}/join", response_model=schemas.EventResponse)
 def join_event(
     event_id: int,
