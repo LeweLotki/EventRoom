@@ -29,19 +29,18 @@ def create_event(db: Session, event: schemas.EventCreate, user_id: int):
 
 
 def join_event(db: Session, event_id: int, user_id: int):
-    try:
-        event = db.query(models.Event).filter(models.Event.id == event_id).first()
-        if event is None:
-            raise HTTPException(status_code=404, detail="Event not found")
+    event = db.query(models.Event).filter(models.Event.id == event_id).first()
+    if event is None:
+        raise HTTPException(status_code=404, detail="Event not found")
 
-        logger.debug(f"Before join: {event.members}")
+    logger.debug(f"Before join: {event.members}")
 
-        # Ensure user_id is not already in members
-        if user_id not in event.members:
-            event.members.append(user_id)
-            logger.debug(f"After join: {event.members}")
+    # Ensure user_id is not already in members
+    if user_id not in event.members:
+        event.members.append(user_id)
+        logger.debug(f"After join: {event.members}")
 
-            # Use explicit update
+        try:
             db.query(models.Event).filter(models.Event.id == event_id).update(
                 {"members": event.members}, synchronize_session="fetch"
             )
@@ -49,15 +48,16 @@ def join_event(db: Session, event_id: int, user_id: int):
             db.refresh(event)
             logger.debug(f"Updated event in database: {event.members}")
 
-        return event
-    except IntegrityError as e:
-        db.rollback()
-        logger.error(f"IntegrityError: {str(e)}")
-        raise HTTPException(status_code=400, detail="Failed to join event")
-    except SQLAlchemyError as e:
-        db.rollback()
-        logger.error(f"SQLAlchemyError: {str(e)}")
-        raise HTTPException(status_code=500, detail="Database error occurred")
+        except IntegrityError as e:
+            db.rollback()
+            logger.error(f"IntegrityError: {str(e)}")
+            raise HTTPException(status_code=400, detail="Failed to join event")
+        except SQLAlchemyError as e:
+            db.rollback()
+            logger.error(f"SQLAlchemyError: {str(e)}")
+            raise HTTPException(status_code=500, detail="Database error occurred")
+
+    return event
 
 def delete_event(db: Session, event_id: int, user_id: int):
     event = db.query(models.Event).filter(models.Event.id == event_id).first()

@@ -28,11 +28,11 @@ def read_event(event_id: int, db: Session = Depends(get_db)):
 def read_events(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     return crud.get_events(db, skip=skip, limit=limit)
 
-@router.put("/{event_id}/join", response_model=schemas.EventResponse)
+@router.patch("/{event_id}/join", response_model=schemas.EventResponse)
 def join_event(
     event_id: int,
     db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    current_user: User = Depends(get_current_user)  # Use the correct User schema
 ):
     return crud.join_event(db=db, event_id=event_id, user_id=current_user.id)
 

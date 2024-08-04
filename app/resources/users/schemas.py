@@ -4,6 +4,9 @@ class UserBase(BaseModel):
     email: EmailStr
     full_name: str | None = None
 
+    class Config:
+        from_attributes = True
+
 class UserCreate(UserBase):
     password: str
 
