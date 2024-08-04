@@ -5,8 +5,11 @@ from app.resources.users import crud, schemas
 from app.core.database import get_db
 from app.core.security import verify_password, create_access_token
 from datetime import timedelta
+
 from app.resources.profiles.crud import create_profile
 from app.resources.profiles.schemas import ProfileCreate
+from app.resources.settings.crud import create_setting
+from app.resources.settings.schemas import SettingCreate
 
 router = APIRouter()
 
@@ -36,6 +39,9 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     profile_data = ProfileCreate(user_id=new_user.id)
     create_profile(db, profile_data)
     
+    setting_data = SettingCreate(user_id=new_user.id)
+    create_setting(db, setting_data)
+
     return new_user 
 
 @router.get("/{user_id}", response_model=schemas.UserResponse)

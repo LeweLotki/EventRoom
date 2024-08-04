@@ -3,14 +3,14 @@
 from pydantic import BaseModel, Field, constr, validator
 from typing import Optional
 
-class ProfileCreate(BaseModel):
+class SettingCreate(BaseModel):
     user_id: int
     options: Optional[str] = None
 
-class ProfileUpdate(BaseModel):
+class SettingUpdate(BaseModel):
     options: Optional[str] = None
 
-class ProfileResponse(BaseModel):
+class SettingResponse(BaseModel):
     id: int
     user_id: int
     options: Optional[str] = None
