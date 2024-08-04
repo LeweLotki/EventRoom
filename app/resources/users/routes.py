@@ -5,6 +5,8 @@ from app.resources.users import crud, schemas
 from app.core.database import get_db
 from app.core.security import verify_password, create_access_token
 from datetime import timedelta
+from app.resources.profiles.crud import create_profile
+from app.resources.profiles.schemas import ProfileCreate
 
 router = APIRouter()
 
@@ -28,7 +30,13 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+
+    new_user = crud.create_user(db=db, user=user)
+
+    profile_data = ProfileCreate(user_id=new_user.id)
+    create_profile(db, profile_data)
+    
+    return new_user 
 
 @router.get("/{user_id}", response_model=schemas.UserResponse)
 def read_user(user_id: int, db: Session = Depends(get_db)):

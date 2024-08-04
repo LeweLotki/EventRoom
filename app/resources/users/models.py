@@ -12,6 +12,5 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     full_name = Column(String)
 
-    # Define relationship with QuizResponse
     responses = relationship("QuizResponse", back_populates="user")
-
+    profile = relationship("Profile", uselist=False, back_populates="user")

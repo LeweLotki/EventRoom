@@ -8,6 +8,7 @@ from app.resources.users.routes import router as users_router
 from app.resources.quizes.routes import router as quizes_router
 from app.resources.quiz_responses.routes import router as quiz_responses_router
 from app.resources.events.routes import router as events_router
+from app.resources.profiles.routes import router as profiles_router
 
 from app.core.database import Base, engine
 from app.core.config import settings
@@ -27,6 +28,7 @@ app.include_router(users_router, prefix="/users", tags=["users"])
 app.include_router(quizes_router, prefix="/quizes", tags=["quizes"])
 app.include_router(quiz_responses_router, prefix="/quiz_responses", tags=["quiz_responses"])
 app.include_router(events_router, prefix="/events", tags=["events"])
+app.include_router(profiles_router, prefix="/profiles", tags=["profiles"])
 
 @app.get("/")
 def read_root():
