@@ -6,6 +6,8 @@ from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
 from app.resources.events import models, schemas
 from app.resources.events.utils import parse_geolocation, haversine_distance
+from app.resources.events.models import Event
+from sqlalchemy import func, Integer
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +35,14 @@ def get_nearby_events(db: Session, event_id: int, distance: float):
             nearby_events.append(e)
 
     return nearby_events
+
+
+def get_events_by_user_id(db: Session, user_id: int):
+    return (
+        db.query(Event)
+        .filter(Event.members[0].astext.cast(Integer) == user_id)
+        .all()
+    )
 
 def create_event(db: Session, event: schemas.EventCreate, user_id: int):
     db_event = models.Event(

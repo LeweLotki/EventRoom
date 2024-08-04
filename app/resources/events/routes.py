@@ -40,6 +40,19 @@ def get_nearby_events(
         raise HTTPException(status_code=404, detail="No nearby events found")
     return nearby_events
 
+@router.get("/owner/{user_id}", response_model=list[schemas.EventResponse])
+def get_events_by_owner(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    if current_user.id != user_id:
+        raise HTTPException(status_code=403, detail="Forbidden")
+    events = crud.get_events_by_user_id(db=db, user_id=user_id)
+    if not events:
+        raise HTTPException(status_code=404, detail="No events found for this user")
+    return events
+
 @router.patch("/{event_id}/join", response_model=schemas.EventResponse)
 def join_event(
     event_id: int,
