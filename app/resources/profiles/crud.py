@@ -2,6 +2,7 @@
 
 from sqlalchemy.orm import Session
 from app.resources.profiles import models, schemas
+from app.resources.profiles.models import Profile 
 
 def create_profile(db: Session, profile: schemas.ProfileCreate):
     db_profile = models.Profile(**profile.dict())
@@ -23,3 +24,5 @@ def update_profile(db: Session, user_id: int, profile_update: schemas.ProfileUpd
     db.refresh(db_profile)
     return db_profile
 
+def get_profile_by_id(db: Session, profile_id: int):
+    return db.query(Profile).filter(Profile.id == profile_id).first()

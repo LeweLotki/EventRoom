@@ -19,6 +19,17 @@ def get_profile(
         raise HTTPException(status_code=404, detail="Profile not found")
     return profile
 
+@router.get("/{profile_id}", response_model=schemas.ProfileResponse)
+def get_profile_by_id(
+    profile_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    profile = crud.get_profile_by_id(db=db, profile_id=profile_id)
+    if profile is None:
+        raise HTTPException(status_code=404, detail="Profile not found")
+    return profile
+
 @router.patch("/update", response_model=schemas.ProfileResponse)
 def update_profile(
     profile_update: schemas.ProfileUpdate,
