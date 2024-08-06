@@ -21,3 +21,13 @@ class EventResponse(EventBase):
 class UserLocation(BaseModel):
     latitude: float
     longitude: float
+
+class ProfileResponse(BaseModel):
+    id: int
+    user_id: int
+    profile_image: Optional[str] = None
+    description: Optional[str] = None
+    options: Optional[str] = None
+
+    class Config:
+        from_attributes = True

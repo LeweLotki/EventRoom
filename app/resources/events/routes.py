@@ -7,6 +7,7 @@ from app.core.database import get_db
 from app.dependencies.auth import get_current_user
 from app.resources.users.models import User
 from app.resources.events.utils import calculate_distance
+from app.resources.profiles.schemas import ProfileResponse
 
 router = APIRouter()
 
@@ -89,4 +90,26 @@ def delete_event(
     current_user: User = Depends(get_current_user)
 ):
     return crud.delete_event(db=db, event_id=event_id, user_id=current_user.id)
+
+@router.get("/members/{event_id}", response_model=list[ProfileResponse])
+def get_event_member_profiles(
+    event_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Retrieve the event using the given event_id
+    event = crud.get_event(db=db, event_id=event_id)
+    if event is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    # Get the list of user IDs from the event's members
+    member_ids = event.members
+
+    # Fetch the profiles for each member ID
+    profiles = crud.get_profiles_by_user_ids(db=db, user_ids=member_ids)
+
+    if not profiles:
+        raise HTTPException(status_code=404, detail="No profiles found for this event's members")
+
+    return profiles
 

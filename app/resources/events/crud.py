@@ -8,6 +8,7 @@ from app.resources.events import models, schemas
 from app.resources.events.utils import parse_geolocation, haversine_distance
 from app.resources.events.models import Event
 from sqlalchemy import func, Integer
+from app.resources.profiles.models import Profile
 
 logger = logging.getLogger(__name__)
 
@@ -102,3 +103,7 @@ def delete_event(db: Session, event_id: int, user_id: int):
 
 def get_all_events(db: Session):
     return db.query(Event).all()
+
+
+def get_profiles_by_user_ids(db: Session, user_ids: list):
+    return db.query(Profile).filter(Profile.user_id.in_(user_ids)).all()
