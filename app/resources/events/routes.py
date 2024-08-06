@@ -52,9 +52,12 @@ def get_nearby_events_for_user(
     nearby_events = []
     for event in all_events:
         event_location = event.geolocation.split(',')
-        event_lat = float(event_location[0])
-        event_lon = float(event_location[1])
-        
+        if event_location:
+            event_lat = float(event_location[0])
+            event_lon = float(event_location[1])
+        else:
+            continue
+
         if calculate_distance(location.latitude, location.longitude, event_lat, event_lon) <= distance:
             nearby_events.append(event)
 
