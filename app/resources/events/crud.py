@@ -99,3 +99,6 @@ def delete_event(db: Session, event_id: int, user_id: int):
     db.commit()
     return {"message": "Event deleted successfully"}
 
+
+def get_all_events(db: Session):
+    return db.query(Event).all()

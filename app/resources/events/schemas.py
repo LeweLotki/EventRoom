@@ -18,3 +18,6 @@ class EventResponse(EventBase):
     class Config:
         from_attributes = True  # Use from_attributes for Pydantic v2 compatibility
 
+class UserLocation(BaseModel):
+    latitude: float
+    longitude: float
