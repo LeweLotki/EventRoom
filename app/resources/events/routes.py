@@ -52,7 +52,7 @@ def get_nearby_events_for_user(
     nearby_events = []
     for event in all_events:
         event_location = event.geolocation.split(',')
-        if event_location:
+        if '' not in event_location:
             event_lat = float(event_location[0])
             event_lon = float(event_location[1])
         else:
