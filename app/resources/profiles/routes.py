@@ -19,13 +19,13 @@ def get_profile(
         raise HTTPException(status_code=404, detail="Profile not found")
     return profile
 
-@router.get("/{profile_id}", response_model=schemas.ProfileResponse)
+@router.get("/{user_id}", response_model=schemas.ProfileResponse)
 def get_profile_by_id(
-    profile_id: int,
+    user_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    profile = crud.get_profile_by_id(db=db, profile_id=profile_id)
+    profile = crud.get_profile_by_user_id(db=db, user_id=user_id)
     if profile is None:
         raise HTTPException(status_code=404, detail="Profile not found")
     return profile
