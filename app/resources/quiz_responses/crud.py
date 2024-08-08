@@ -12,3 +12,5 @@ def create_quiz_response(db: Session, quiz_response: schemas.QuizResponseCreate,
     db.refresh(db_quiz_response)
     return db_quiz_response
 
+def has_user_submitted_response(db: Session, user_id: int) -> bool:
+    return db.query(models.QuizResponse).filter(models.QuizResponse.user_id == user_id).first() is not None
