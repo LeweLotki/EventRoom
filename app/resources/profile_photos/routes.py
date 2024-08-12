@@ -50,3 +50,25 @@ def download_latest_photo(
 
     return FileResponse(path=file_path, filename=file_path.name, media_type='application/octet-stream')
 
+@router.get("/download/{user_id}")
+def download_latest_photo_for_user(
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    # Check if the user exists
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    latest_photo = crud.get_latest_profile_photo(db=db, user_id=user_id)
+    if not latest_photo:
+        raise HTTPException(status_code=404, detail="No profile photos found for this user")
+
+    # Construct the file path and return as FileResponse
+    file_path = Path(latest_photo.file_path)
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File not found on the server")
+
+    return FileResponse(path=file_path, filename=file_path.name, media_type='application/octet-stream')
+
