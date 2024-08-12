@@ -15,4 +15,4 @@ class Profile(Base):
 
     # Relationship with the User model
     user = relationship("User", back_populates="profile")
-
+    profile_photos = relationship("ProfilePhoto", back_populates="profile")

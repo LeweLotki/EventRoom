@@ -6,6 +6,7 @@ from app.resources.quiz_responses.routes import router as quiz_responses_router
 from app.resources.events.routes import router as events_router
 from app.resources.profiles.routes import router as profiles_router
 from app.resources.settings.routes import router as settings_router
+from app.resources.profile_photos.routes import router as profile_photos_router
 
 from app.core.database import Base, engine
 from app.core.config import settings
@@ -31,4 +32,5 @@ app.include_router(quiz_responses_router, prefix="/quiz_responses", tags=["quiz_
 app.include_router(events_router, prefix="/events", tags=["events"])
 app.include_router(profiles_router, prefix="/profiles", tags=["profiles"])
 app.include_router(settings_router, prefix="/settings", tags=["settings"])
+app.include_router(profile_photos_router, prefix="/profile_photos", tags=["profile_photos"])
 

@@ -15,3 +15,4 @@ class User(Base):
     responses = relationship("QuizResponse", back_populates="user")
     profile = relationship("Profile", uselist=False, back_populates="user")
     setting = relationship("Setting", uselist=False, back_populates="user")
+    profile_photos = relationship("ProfilePhoto", back_populates="user")
