@@ -1,6 +1,7 @@
 # app/resources/profile_photos/crud.py
 
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 from app.resources.profile_photos.models import ProfilePhoto
 from app.resources.profiles.models import Profile
 from app.resources.profile_photos.schemas import ProfilePhotoCreate
@@ -27,4 +28,7 @@ def create_profile_photo(db: Session, user_id: int, profile_id: int, photo_data:
 
 def get_profile_photos_by_user_id(db: Session, user_id: int):
     return db.query(ProfilePhoto).filter(ProfilePhoto.user_id == user_id).all()
+
+def get_latest_profile_photo(db: Session, user_id: int):
+    return db.query(ProfilePhoto).filter(ProfilePhoto.user_id == user_id).order_by(desc(ProfilePhoto.id)).first()
 
