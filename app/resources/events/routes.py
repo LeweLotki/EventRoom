@@ -116,3 +116,17 @@ def get_event_member_profiles(
 
     return profiles
 
+@router.get("/has_joined/{event_id}", response_model=bool)
+def has_joined_event(
+    event_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    event = crud.get_event(db=db, event_id=event_id)
+    if event is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    # Check if the current user is in the member list of the event
+    has_joined = current_user.id in event.members
+    return has_joined
+
